@@ -1,0 +1,180 @@
+{
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "Glog.AI",
+          "organization": "Glog.AI",
+          "fullName": "Glog, Making software more secure",
+          "version": "1.0.0",
+          "semanticVersion": "1.0.0",
+          "informationUri": "https://www.glog.ai",
+          "rules": [
+            {
+              "id": "glog-643ace96-9e28-49d2-9e2f-bf46887d5874",
+              "help": {
+                "text": ""
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "glog-b6cda22b-bcf1-47ef-91a5-10c621537173",
+              "help": {
+                "text": ""
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            }
+          ],
+          "language": "en-US",
+          "contents": [
+            "localizedData",
+            "nonLocalizedData"
+          ],
+          "isComprehensive": false
+        }
+      },
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "glog-643ace96-9e28-49d2-9e2f-bf46887d5874",
+          "kind": "fail",
+          "level": "note",
+          "message": {},
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "include/fdeep/tensor.hpp"
+                },
+                "region": {
+                  "startLine": 919,
+                  "startColumn": 13,
+                  "endLine": 919,
+                  "endColumn": 58,
+                  "charOffset": 39215,
+                  "charLength": 45,
+                  "snippet": {
+                    "text": "memcpy(m.data(), values.data(), values.size()",
+                    "rendered": {
+                      "text": "memcpy(m.data(), values.data(), values.size()",
+                      "markdown": "`memcpy(m.data(), values.data(), values.size()`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "include/fdeep/tensor.hpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 39215,
+                        "charLength": 45
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(m.data(), <size of m.data()>,  values.data(),  values.size()"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-b6cda22b-bcf1-47ef-91a5-10c621537173",
+          "kind": "fail",
+          "level": "note",
+          "message": {},
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "include/fdeep/tensor.hpp"
+                },
+                "region": {
+                  "startLine": 927,
+                  "startColumn": 13,
+                  "endLine": 927,
+                  "endColumn": 60,
+                  "charOffset": 39555,
+                  "charLength": 47,
+                  "snippet": {
+                    "text": "memcpy(result->data(), m.data(), result->size()",
+                    "rendered": {
+                      "text": "memcpy(result->data(), m.data(), result->size()",
+                      "markdown": "`memcpy(result->data(), m.data(), result->size()`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "include/fdeep/tensor.hpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 39555,
+                        "charLength": 47
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(result->data(), <size of result->data()>,  m.data(),  result->size()"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        }
+      ],
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}
