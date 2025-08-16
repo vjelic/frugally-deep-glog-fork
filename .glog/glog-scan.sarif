@@ -12,9 +12,22 @@
           "informationUri": "https://www.glog.ai",
           "rules": [
             {
-              "id": "glog-32e524f5-e2cc-4ce8-a816-06570fec3084",
+              "id": "glog-34020721-738f-4acb-9207-e6878af862a9",
               "help": {
-                "text": ""
+                "text": "",
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(m.data(), values.data(), values.size())`, there is no check to ensure that `values.size()` is not larger than the size of `m.data()`. This can lead to a buffer overflow, which can cause the program to crash or lead to execution of arbitrary code.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer and the size of the source data before the `memcpy` operation. If the source data is larger, you should either increase the size of the destination buffer or reduce the size of the source data.\n\n## Source Code Fix Recommendation\n\nHere is a recommended fix for the provided code snippet:\n\n```cpp\nif (values.size() <= m.size()) {\n    memcpy(m.data(), values.data(), values.size());\n} else {\n    // Handle the error, e.g., throw an exception or resize m\n}\n```\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C standard library, so no additional libraries are needed for this code snippet.\n\n## OWASP Resources\n\n- [Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that the links provided are active and accessible to anonymous users at the time of writing this report."
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "glog-0689ea09-8b57-407d-a241-d08e06325c9c",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function does not check for the size of the destination buffer, which can lead to buffer overflow if the source data is larger than the destination buffer. This is a common vulnerability in C++ programming, and can lead to serious security issues such as data corruption, system crash, or even arbitrary code execution.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the source data. This can be done by checking the size of the source data and the size of the destination buffer before calling `memcpy`. If the source data is larger than the destination buffer, you should either resize the destination buffer or truncate the source data to fit into the destination buffer.\n\n## Source Code Fix Recommendation\n\nHere is a recommended fix for the specific vulnerability sink:\n\n```cpp\nif (m.size() <= result->size()) {\n    memcpy(result->data(), m.data(), m.size());\n} else {\n    // Handle error: source data is too large for destination buffer\n}\n```\n\nIn this fix, we first check if the size of the source data (`m.size()`) is less than or equal to the size of the destination buffer (`result->size()`). If it is, we proceed with the `memcpy`. If it is not, we handle the error appropriately.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C standard library, so no additional library dependencies are required for the code example to execute properly.\n\n## OWASP Resources\n\n- [Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n\n## Common Weakness Enumeration (CWE)\n\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)"
               },
               "properties": {
                 "tags": [
@@ -34,73 +47,12 @@
       "language": "en-US",
       "results": [
         {
-          "ruleId": "glog-68e0ae69-63e3-48e3-8ae8-89f7f06c29dd",
+          "ruleId": "glog-34020721-738f-4acb-9207-e6878af862a9",
           "kind": "fail",
           "level": "note",
-          "message": {},
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "include/fdeep/tensor.hpp"
-                },
-                "region": {
-                  "startLine": 927,
-                  "startColumn": 13,
-                  "endLine": 927,
-                  "endColumn": 60,
-                  "charOffset": 39555,
-                  "charLength": 47,
-                  "snippet": {
-                    "text": "memcpy(result->data(), m.data(), result->size()",
-                    "rendered": {
-                      "text": "memcpy(result->data(), m.data(), result->size()",
-                      "markdown": "`memcpy(result->data(), m.data(), result->size()`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "fixes": [
-            {
-              "description": {
-                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
-              },
-              "artifactChanges": [
-                {
-                  "artifactLocation": {
-                    "uri": "include/fdeep/tensor.hpp"
-                  },
-                  "replacements": [
-                    {
-                      "deletedRegion": {
-                        "charOffset": 39555,
-                        "charLength": 47
-                      },
-                      "insertedContent": {
-                        "text": "memcpy_s(result->data(), <size of result->data()>,  m.data(),  result->size()"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "BestPractice",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.ProblematicFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "glog-32e524f5-e2cc-4ce8-a816-06570fec3084",
-          "kind": "fail",
-          "level": "note",
-          "message": {},
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
           "locations": [
             {
               "physicalLocation": {
@@ -144,6 +96,71 @@
                       },
                       "insertedContent": {
                         "text": "memcpy_s(m.data(), <size of m.data()>,  values.data(),  values.size()"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-0689ea09-8b57-407d-a241-d08e06325c9c",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "include/fdeep/tensor.hpp"
+                },
+                "region": {
+                  "startLine": 927,
+                  "startColumn": 13,
+                  "endLine": 927,
+                  "endColumn": 60,
+                  "charOffset": 39555,
+                  "charLength": 47,
+                  "snippet": {
+                    "text": "memcpy(result->data(), m.data(), result->size()",
+                    "rendered": {
+                      "text": "memcpy(result->data(), m.data(), result->size()",
+                      "markdown": "`memcpy(result->data(), m.data(), result->size()`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "include/fdeep/tensor.hpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 39555,
+                        "charLength": 47
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(result->data(), <size of result->data()>,  m.data(),  result->size()"
                       }
                     }
                   ]
