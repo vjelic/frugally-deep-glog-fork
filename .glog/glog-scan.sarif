@@ -12,10 +12,10 @@
           "informationUri": "https://www.glog.ai",
           "rules": [
             {
-              "id": "39ab219f-8268-3ae0-b7c6-ca4b687357ea",
+              "id": "d3e64a1b-2e1f-3be7-a4e7-ea2dd7741965",
               "help": {
                 "text": "",
-                "markdown": "This finding is classified as a genuine vulnerability because the analysis identified a risk of undefined behavior due to possible overlap between the source and destination memory regions in the memory copy operation. The code uses a memory copy function where the source and destination may refer to overlapping memory areas, as indicated by the dataflow analysis. Additionally, there are no checks ensuring that the source and destination pointers are non-null, which further increases the risk of undefined behavior or crashes. The absence of explicit bounds or capacity checks, and the lack of a guard to ensure the pointers are valid, all contribute to the severity of this issue. The classification and verdict both indicate a high-confidence, actionable problem.\n\n## In Context Remediation\nTo prevent undefined behavior when copying memory, ensure that the source and destination memory regions do not overlap. If overlap is possible, use a memory move function that safely handles overlapping regions. Additionally, add explicit checks to ensure that both source and destination pointers are not null before performing the operation. For example:\n\n```cpp\nif (m.data() != nullptr && values.data() != nullptr) {\n    // If overlap is possible, use memmove instead of memcpy\n    std::memmove(m.data(), values.data(), values.size() * sizeof(float_type));\n}\n```\n\nThis change ensures that the operation is safe even if the memory regions overlap, and avoids undefined behavior due to null pointers.\n\n## References\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n- [CWE-787: Out-of-bounds Write](https://cwe.mitre.org/data/definitions/787.html)\n- [OWASP: Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [OWASP C-Based Toolchain Hardening Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n\n___\n"
+                "markdown": "This finding is classified as a genuine vulnerability because the analysis detected a risk of undefined behavior due to possible overlap between the source and destination memory regions in the memory copy operation. The destination and source pointers may refer to overlapping memory, as indicated by the observed alias assignment. Additionally, there are no checks ensuring that either the source or destination pointers are non-null, which increases the risk of null pointer dereference. The absence of explicit bounds or capacity checks further increases the risk. These factors make this a high-confidence, actionable issue that should be addressed to prevent undefined behavior and potential security vulnerabilities.\n\n## In Context Remediation\nTo prevent undefined behavior when copying memory, ensure that the source and destination memory regions do not overlap. If there is any possibility of overlap, use `std::memmove` instead of `std::memcpy`, as `std::memmove` is designed to handle overlapping regions safely. Additionally, add explicit checks to ensure that neither the source nor the destination pointers are null before performing the copy operation. For example:\n\n```cpp\nif (result && m && result->data() && m.data()) {\n    std::memmove(result->data(), m.data(), result->size() * sizeof(float_type));\n}\n```\n\nThis change ensures that the copy operation is safe even if the memory regions overlap and avoids null pointer dereference. Always validate the pointers and consider the possibility of overlap in your memory operations.\n\n## References\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n- [CWE-787: Out-of-bounds Write](https://cwe.mitre.org/data/definitions/787.html)\n- [OWASP: Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [OWASP C-Based Toolchain Hardening Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n\n___\n"
               },
               "properties": {
                 "tags": [
@@ -24,10 +24,10 @@
               }
             },
             {
-              "id": "d3e64a1b-2e1f-3be7-a4e7-ea2dd7741965",
+              "id": "39ab219f-8268-3ae0-b7c6-ca4b687357ea",
               "help": {
                 "text": "",
-                "markdown": "This finding is classified as a genuine vulnerability because the analysis identified a risk of undefined behavior due to possible overlap between the source and destination memory regions in the memory copy operation. The destination and source pointers may refer to overlapping memory, as indicated by the observed alias assignment. Additionally, there are no explicit checks to ensure that either the source or destination pointers are non-null, which increases the risk of null pointer dereference. The operation does not use a guard to prevent underflow or overlap, and the count argument is not derived from a known safe capacity. These factors together indicate a high likelihood of a real issue that could lead to undefined behavior, memory corruption, or crashes.\n\n## In Context Remediation\nTo prevent undefined behavior when copying memory, ensure that the source and destination memory regions do not overlap. If there is any possibility of overlap, use `std::memmove` instead of `std::memcpy`, as `std::memmove` is designed to handle overlapping regions safely. Additionally, add explicit checks to ensure that both the source and destination pointers are not null before performing the copy operation. For example:\n\n```cpp\nif (result && m && result->data() && m.data()) {\n    std::memmove(result->data(), m.data(), result->size() * sizeof(float_type));\n}\n```\n\nThis change ensures that the copy is safe even if the memory regions overlap, and it avoids null pointer dereference. Always validate the pointers and consider the possibility of overlap when using low-level memory operations.\n\n## References\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n- [CWE-787: Out-of-bounds Write](https://cwe.mitre.org/data/definitions/787.html)\n- [OWASP: Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [OWASP C-Based Toolchain Hardening Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n\n___\n"
+                "markdown": "This finding is classified as a genuine vulnerability because the analysis identified a risk of undefined behavior due to possible overlap between the source and destination memory regions in the memory copy operation. The code copies data from one buffer to another using a standard memory copy function, but there is evidence that the source and destination may refer to overlapping memory regions, which can result in unpredictable behavior. Additionally, there are no checks ensuring that the source and destination pointers are non-null, increasing the risk of null pointer dereference. The absence of explicit bounds checks or guards further increases the risk. These factors indicate a high likelihood of a real issue that could lead to security or stability problems.\n\n## In Context Remediation\nTo prevent undefined behavior when copying memory, ensure that the source and destination buffers do not overlap. If there is any possibility of overlap, use a memory move function that safely handles overlapping regions. Additionally, add explicit checks to ensure that neither the source nor the destination pointers are null before performing the copy operation. For example:\n\n```cpp\nif (m.data() != nullptr && values.data() != nullptr && m.data() != values.data()) {\n    std::memcpy(m.data(), values.data(), values.size() * sizeof(float_type));\n}\n```\n\nIf overlap is possible, replace the copy with a move operation:\n\n```cpp\nif (m.data() != nullptr && values.data() != nullptr) {\n    std::memmove(m.data(), values.data(), values.size() * sizeof(float_type));\n}\n```\n\n## References\n- [OWASP C-Based Toolchain Hardening Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n- [CWE-787: Out-of-bounds Write](https://cwe.mitre.org/data/definitions/787.html)\n- [OWASP Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n\n___\n"
               },
               "properties": {
                 "tags": [
@@ -46,71 +46,6 @@
       },
       "language": "en-US",
       "results": [
-        {
-          "ruleId": "39ab219f-8268-3ae0-b7c6-ca4b687357ea",
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Problematic C function detected (memcpy)"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "include/fdeep/tensor.hpp"
-                },
-                "region": {
-                  "startLine": 919,
-                  "startColumn": 13,
-                  "endLine": 919,
-                  "endColumn": 58,
-                  "charOffset": 39215,
-                  "charLength": 45,
-                  "snippet": {
-                    "text": "memcpy(m.data(), values.data(), values.size()",
-                    "rendered": {
-                      "text": "memcpy(m.data(), values.data(), values.size()",
-                      "markdown": "`memcpy(m.data(), values.data(), values.size()`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "fixes": [
-            {
-              "description": {
-                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
-              },
-              "artifactChanges": [
-                {
-                  "artifactLocation": {
-                    "uri": "include/fdeep/tensor.hpp"
-                  },
-                  "replacements": [
-                    {
-                      "deletedRegion": {
-                        "charOffset": 39215,
-                        "charLength": 45
-                      },
-                      "insertedContent": {
-                        "text": "memcpy_s(m.data(), <size of m.data()>,  values.data(),  values.size()"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "BestPractice",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.ProblematicFunction"
-            ]
-          }
-        },
         {
           "ruleId": "d3e64a1b-2e1f-3be7-a4e7-ea2dd7741965",
           "kind": "fail",
@@ -161,6 +96,71 @@
                       },
                       "insertedContent": {
                         "text": "memcpy_s(result->data(), <size of result->data()>,  m.data(),  result->size()"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "39ab219f-8268-3ae0-b7c6-ca4b687357ea",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Problematic C function detected (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "include/fdeep/tensor.hpp"
+                },
+                "region": {
+                  "startLine": 919,
+                  "startColumn": 13,
+                  "endLine": 919,
+                  "endColumn": 58,
+                  "charOffset": 39215,
+                  "charLength": 45,
+                  "snippet": {
+                    "text": "memcpy(m.data(), values.data(), values.size()",
+                    "rendered": {
+                      "text": "memcpy(m.data(), values.data(), values.size()",
+                      "markdown": "`memcpy(m.data(), values.data(), values.size()`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "include/fdeep/tensor.hpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 39215,
+                        "charLength": 45
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(m.data(), <size of m.data()>,  values.data(),  values.size()"
                       }
                     }
                   ]
